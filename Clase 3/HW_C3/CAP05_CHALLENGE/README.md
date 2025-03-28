@@ -2,11 +2,17 @@
 
 ![InternetWhisper Logo](assets/logo.png)
 
+*[English](README_EN.md) | [Español](README.md) | [Français](README_FR.md) | [中文](README_ZH.md)*
+
 ## 📝 Descripción del Proyecto
 
 InternetWhisper es un chatbot de IA avanzado que combina la potencia de los modelos de lenguaje de última generación con la capacidad de buscar y procesar información actualizada de Internet. A diferencia de los chatbots tradicionales limitados a datos de entrenamiento estáticos, InternetWhisper puede navegar por la web, extraer información relevante y proporcionar respuestas contextualizadas y actualizadas a las consultas de los usuarios.
 
 El proyecto está diseñado para ofrecer una experiencia conversacional fluida mientras aprovecha fuentes de información en tiempo real, implementando técnicas de Retrieval-Augmented Generation (RAG) para mejorar la precisión y relevancia de las respuestas.
+
+<p align="center">
+  <img src="assets/demo.gif" alt="InternetWhisper Demo" width="700">
+</p>
 
 ## 🔧 Arquitectura Técnica
 
@@ -58,6 +64,42 @@ graph TD
     C -->|Streaming SSE| B
     C <-->|Caché| G[Redis]
     B -->|Respuesta final| A
+```
+
+### Diagrama de Arquitectura Detallado
+
+<p align="center">
+  <img src="assets/architecture_diagram.png" alt="Arquitectura InternetWhisper" width="800">
+</p>
+
+### Diagrama de Secuencia
+
+```mermaid
+sequenceDiagram
+    participant U as Usuario
+    participant F as Frontend (Streamlit)
+    participant O as Orchestrator (FastAPI)
+    participant G as Google API
+    participant S as Scraper (Playwright)
+    participant AI as OpenAI API
+    participant R as Redis Cache
+
+    U->>F: Envía consulta
+    F->>O: Solicitud API
+    O->>R: Verifica caché
+    alt Información en caché
+        R->>O: Devuelve datos en caché
+    else Necesita búsqueda
+        O->>G: Solicita resultados de búsqueda
+        G->>O: Devuelve URLs relevantes
+        O->>S: Solicita extracción de contenido
+        S->>O: Devuelve contenido estructurado
+        O->>AI: Envía prompt enriquecido
+        AI->>O: Streaming de tokens de respuesta
+        O->>R: Almacena en caché
+    end
+    O->>F: Streaming SSE de respuesta
+    F->>U: Muestra respuesta progresivamente
 ```
 
 ## 🔐 Configuración de Variables de Entorno
@@ -242,6 +284,10 @@ data: {"type": "done", "content": ""}
 
 ### Ejemplo 1: Consulta de Actualidad
 
+<p align="center">
+  <img src="assets/example_news.png" alt="Ejemplo de consulta de noticias" width="700">
+</p>
+
 **Usuario**: ¿Cuáles son las últimas noticias sobre cambio climático?
 
 **InternetWhisper**: *Buscando información actualizada...*
@@ -263,6 +309,10 @@ Según las fuentes más recientes, estas son las últimas noticias sobre cambio 
 **Fuentes**: [ONU Cambio Climático](https://www.un.org/climate), [Nature Climate Research](https://www.nature.com/climate), [BBC News](https://www.bbc.com/news/science_and_environment)
 
 ### Ejemplo 2: Consulta Técnica
+
+<p align="center">
+  <img src="assets/example_technical.png" alt="Ejemplo de consulta técnica" width="700">
+</p>
 
 **Usuario**: Explícame cómo funciona la tecnología RAG en aplicaciones de IA.
 
@@ -289,6 +339,51 @@ En aplicaciones prácticas, RAG se implementa en asistentes como el que estás u
 
 **Fuentes**: [Towards Data Science](https://towardsdatascience.com), [Hugging Face Blog](https://huggingface.co/blog), [OpenAI Documentation](https://platform.openai.com/docs)
 
+### Ejemplo 3: Comparación de Productos
+
+**Usuario**: Compara los últimos modelos de iPhone y Samsung Galaxy.
+
+**InternetWhisper**: *Buscando información comparativa...*
+
+# Comparación: iPhone 15 Pro vs Samsung Galaxy S23 Ultra
+
+## Diseño y Pantalla
+- **iPhone 15 Pro**: 6.1" OLED ProMotion (120Hz), titanio, Dynamic Island, más ligero
+- **Galaxy S23 Ultra**: 6.8" AMOLED (120Hz), vidrio Gorilla Glass Victus 2, diseño con S Pen integrado
+
+## Rendimiento
+- **iPhone 15 Pro**: Chip A17 Pro (3nm), 8GB RAM
+- **Galaxy S23 Ultra**: Snapdragon 8 Gen 2, 8-12GB RAM
+
+## Cámaras
+- **iPhone 15 Pro**: 
+  * Principal: 48MP con sensor más grande
+  * Ultra gran angular: 12MP
+  * Teleobjetivo: 12MP (zoom óptico 3x)
+  * Frontal: 12MP con autofoco
+
+- **Galaxy S23 Ultra**:
+  * Principal: 200MP
+  * Ultra gran angular: 12MP
+  * Teleobjetivo dual: 10MP (3x) + 10MP (10x)
+  * Frontal: 12MP
+
+## Batería y Carga
+- **iPhone 15 Pro**: ~3200mAh, carga de 27W, MagSafe 15W
+- **Galaxy S23 Ultra**: 5000mAh, carga de 45W, carga inalámbrica 15W
+
+## Software
+- **iPhone 15 Pro**: iOS 17
+- **Galaxy S23 Ultra**: Android 13 con One UI 5.1
+
+## Precio base
+- **iPhone 15 Pro**: Desde $999 (128GB)
+- **Galaxy S23 Ultra**: Desde $1,199 (256GB)
+
+¿Hay algún aspecto específico de estos dispositivos que te gustaría conocer con más detalle?
+
+**Fuentes**: [Towards Data Science](https://towardsdatascience.com), [Hugging Face Blog](https://huggingface.co/blog), [OpenAI Documentation](https://platform.openai.com/docs)
+
 ## 🤝 Contribución
 
 Las contribuciones son bienvenidas. Por favor, sigue estos pasos:
@@ -302,4 +397,3 @@ Las contribuciones son bienvenidas. Por favor, sigue estos pasos:
 ## 📄 Licencia
 
 Este proyecto está licenciado bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
-

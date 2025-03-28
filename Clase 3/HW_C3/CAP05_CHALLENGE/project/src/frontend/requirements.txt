@@ -1,0 +1,4 @@
+# src\frontend\requirements.txt
+requests==2.31.0
+sseclient-py==1.8.0
+streamlit==1.27.2
